@@ -1,0 +1,71 @@
+# Import libraries
+from tint_shade_generator.lib.rgb2hex import rgb2hex
+from tint_shade_generator.lib.hex2rgb import hex2rgb
+
+def tint_generate(rgb_list, step):
+    """
+    Tint generator
+
+    Parameters:
+    -----------
+        rgb_list: str
+            RGB color list to convert to HEX
+        step: float
+            The ratio between the color step of tint
+
+    Returns:
+    --------
+        hex: str
+            HEX of result tint color
+
+    Raises:
+    -------
+    """
+
+    current_r = rgb_list[0]
+    current_g = rgb_list[1]
+    current_b = rgb_list[2]
+
+    new_r = int(round(current_r + (255 - current_r)*step))
+    new_g = int(round(current_g + (255 - current_g)*step))
+    new_b = int(round(current_b + (255 - current_b)*step))
+
+    new_rgb = [new_r, new_g, new_b]
+
+    return rgb2hex(new_rgb)
+
+def tint_mode(in_color, step, amount):
+    """
+    Tint mode: Generate tint colors and write file
+
+    Parameters:
+    -----------
+        rgb_list: str
+            RGB color list to convert to HEX
+        step: float
+            The ratio between the color step of tint
+        amount: int
+            The number of colors that user wish to generate
+
+    Returns:
+    --------
+        tint: file
+            A file contains generated shade colors
+
+    Raises:
+    -------
+    """
+
+    result_hex = []
+    current_rgb = hex2rgb(in_color)
+
+    for _ in range(amount):
+        rgb_tint = tint_generate(current_rgb, step)
+        result_hex.append(rgb2hex(rgb_tint))
+        current_rgb = rgb_tint
+
+    with open('tint', 'w') as file:
+        for i in range(amount):
+            file.write("tint{0}='{1}'".format(i+1, result_hex[i]))
+
+    print('Wrote file successfully')

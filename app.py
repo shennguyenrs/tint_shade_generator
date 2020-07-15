@@ -1,6 +1,9 @@
 # Import libraries
 import argparse
 import os
+import re
+from tint_shade_generator.lib.tint import tint_mode
+from tint_shade_generator.lib.shade import shade_mode
 
 def run():
     """
@@ -21,61 +24,43 @@ def run():
     parser.add_argument('-m', '--mode', default='shade', help='Choose generation mode between tint or shade. Default: shade')
     parser.add_argument('-i', '--input', required=True, help='Input HEX color')
     parser.add_argument('-o', '--output', help='Output directory. Default: $HOME/.colors')
+    parser.add_argument('-s', '--step', help='The step of shade or tint color. Default: 0.1')
+    parser.add_argument('-a', '--amount', help='The amount of generated color shade or tint. Default: 6. Maximum: 10')
 
     arg = parser.parse_args()
 
-    mode = arg.mode
+    mode = 'shade' if arg.mode == '' else arg.mode
     in_color = arg.input
-    out_dir = arg.output
+    out_dir = '/.colors/' if arg.output == '' else arg.output
+    step = 0.1 if arg.step == '' else arg.step
+    amount = 6 if arg.amount == '' else arg.amount
 
-    # Pass the default setting
-    if mode == '':
-        mode = 'shade'
+    # Input Validation
+    pattern = re.compile('/^#[0-9A-F]{6}$/i')
+    input_validate = re.search(pattern, in_color)
 
-    if out_dir == '':
-        out_dir = '/.colors/'
+    if not input_validate:
+        print('Invalid HEX color code! Please try again')
 
-    # Check output directory
-    home = os.path.expanduser('~')
-    out_path = home + out_dir
-
-    # Create new folder if output directory not exists
-    if os.path.exists(out_path):
-        print('Output directory not found')
-        print('Create new directory {0}'.format(out_path))
-        os.chdir(home)
-        os.mkdir(out_dir)
-
-    # hex2rgb
-    hex_color = in_color.lstrip('#')
-    rgb = []
-    for i in (0, 2, 4):
-        rgb.append(int(hex_color[i:i+2], 16))
-
-    # Define Factor
-    factor = 0.25
-    current_r = rgb[0]
-    current_g = rgb[1]
-    current_b = rgb[2]
-
-    # Shade mode
-    new_r = int(round(current_r*(1-factor)))
-    new_g = int(round(current_g*(1-factor)))
-    new_b = int(round(current_b*(1-factor)))
-
-    # Tint mode
-    new_r = int(round(current_r + (255 - current_r)*factor))
-    new_g = int(round(current_g + (255 - current_g)*factor))
-    new_b = int(round(current_b + (255 - current_b)*factor))
-
-    # rgb2hex
-    new_hex = f'#{new_r:02x}{new_g:02x}{new_b:02x}'
-
-    # Save result file
-    os.chdir(out_path)
-    if mode == 'tint':
-        with open('tint', 'w') as file:
-            file.write("shade='{0}'".format(new_hex))
     else:
-        with open('shade', 'w') as file:
-            file.write(new_hex)
+        # Check output directory
+        home = os.path.expanduser('~')
+        out_path = home + out_dir
+
+        # Create new folder if output directory not exists
+        if not os.path.exists(out_path):
+            print('Output directory not found')
+            print('Create new directory {0}'.format(out_path))
+            os.chdir(home)
+            os.mkdir(out_dir)
+
+        # Change current working directory
+        os.chdir(out_path)
+
+        # Tint mode
+        if mode == 'tint':
+            tint_mode(in_color, step, amount)
+
+        # Shade mode
+        else:
+            shade_mode(in_color, step, amount)
