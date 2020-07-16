@@ -25,7 +25,7 @@ def run():
     parser.add_argument('-i', '--input', type=str, required=True, help='Input HEX color')
     parser.add_argument('-o', '--output', type=str, default='/.colors/', help='Output directory. Default: $HOME/.colors')
     parser.add_argument('-s', '--step', type=float, default=0.25, choices=(0, 1), help='The step of shade or tint color. Default: 0.25. Maximum: 1')
-    parser.add_argument('-a', '--amount', type=int, default=4, choices=range(1, 11), help='The amount of generated color shade or tint. Default: 4. Maximum: 10')
+    parser.add_argument('-a', '--amount', type=int, default=5, choices=range(1, 11), help='The amount of generated color shade or tint. Default: 5. Maximum: 10')
 
     arg = parser.parse_args()
 

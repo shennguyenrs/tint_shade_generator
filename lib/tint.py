@@ -66,7 +66,6 @@ def tint_mode(in_color, step, amount):
 
     print('Writing file...')
     with open('tint', 'w') as file:
-        file.write("tint0='{0}'\n".format(in_color))
         for i in range(amount):
             if i == (amount-1):
                 file.write("tint{0}='{1}'".format(i+1, result_hex[i]))
