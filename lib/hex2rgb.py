@@ -1,6 +1,3 @@
-# Import libraries
-import re
-
 def hex2rgb(color_code):
     """
     Convert HEX code to RGB color

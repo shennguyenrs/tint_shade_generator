@@ -60,12 +60,17 @@ def shade_mode(in_color, step, amount):
     current_rgb = hex2rgb(in_color)
 
     for _ in range(amount):
-        rgb_shade = shade_generate(current_rgb, step)
-        result_hex.append(rgb2hex(rgb_shade))
-        current_rgb = rgb_shade
+        hex_shade = shade_generate(current_rgb, step)
+        result_hex.append(hex_shade)
+        current_rgb = hex2rgb(hex_shade)
 
+    print('Writing file...')
     with open('shade', 'w') as file:
+        file.write("shade0='{0}'\n".format(in_color))
         for i in range(amount):
-            file.write("shade{0}='{1}'".format(i+1, result_hex[i]))
+            if i == (amount-1):
+                file.write("shade{0}='{1}'".format(i+1, result_hex[i]))
+            else:
+                file.write("shade{0}='{1}'\n".format(i+1, result_hex[i]))
 
     print('Wrote file successfully')

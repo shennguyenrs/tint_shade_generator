@@ -20,23 +20,23 @@ def run():
     """
 
     # Parser arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--mode', default='shade', help='Choose generation mode between tint or shade. Default: shade')
-    parser.add_argument('-i', '--input', required=True, help='Input HEX color')
-    parser.add_argument('-o', '--output', help='Output directory. Default: $HOME/.colors')
-    parser.add_argument('-s', '--step', help='The step of shade or tint color. Default: 0.1')
-    parser.add_argument('-a', '--amount', help='The amount of generated color shade or tint. Default: 6. Maximum: 10')
+    parser = argparse.ArgumentParser(description='Tint and Shade generator tool from a given HEX color code')
+    parser.add_argument('-m', '--mode', type=str, default='shade', choices=['shade', 'tint'], help='Choose generation mode between tint or shade. Default: shade')
+    parser.add_argument('-i', '--input', type=str, required=True, help='Input HEX color')
+    parser.add_argument('-o', '--output', type=str, default='/.colors/', help='Output directory. Default: $HOME/.colors')
+    parser.add_argument('-s', '--step', type=float, default=0.25, choices=(0, 1), help='The step of shade or tint color. Default: 0.25. Maximum: 1')
+    parser.add_argument('-a', '--amount', type=int, default=4, choices=range(1, 11), help='The amount of generated color shade or tint. Default: 4. Maximum: 10')
 
     arg = parser.parse_args()
 
-    mode = 'shade' if arg.mode == '' else arg.mode
+    mode = arg.mode
     in_color = arg.input
-    out_dir = '/.colors/' if arg.output == '' else arg.output
-    step = 0.1 if arg.step == '' else arg.step
-    amount = 6 if arg.amount == '' else arg.amount
+    out_dir = arg.output
+    step = arg.step
+    amount = arg.amount
 
     # Input Validation
-    pattern = re.compile('/^#[0-9A-F]{6}$/i')
+    pattern = re.compile('^#[0-9A-F]{6}$', re.IGNORECASE)
     input_validate = re.search(pattern, in_color)
 
     if not input_validate:
