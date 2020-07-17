@@ -11,9 +11,20 @@ def run():
 
     Parameters:
     -----------
+        mode: str
+            Mode of color generation between shade and tint 
+        input: str
+            HEX code of input color
+        output: str
+            The output directory from $HOME 
+        step: float
+            The factor of colors generation
+        amount: int
+            How many colors will be generated
 
     Returns:
     --------
+        A file of generated HEX colors
 
     Raises:
     -------
@@ -24,7 +35,7 @@ def run():
     parser.add_argument('-m', '--mode', type=str, default='shade', choices=['shade', 'tint'], help='Choose generation mode between tint or shade. Default: shade')
     parser.add_argument('-i', '--input', type=str, required=True, help='Input HEX color')
     parser.add_argument('-o', '--output', type=str, default='/.colors/', help='Output directory. Default: $HOME/.colors')
-    parser.add_argument('-s', '--step', type=float, default=0.25, choices=(0, 1), help='The step of shade or tint color. Default: 0.25. Maximum: 1')
+    parser.add_argument('-s', '--step', type=float, default=0.15, choices=(0, 1), help='The step of shade or tint color. Default: 0.15. Maximum: 1')
     parser.add_argument('-a', '--amount', type=int, default=5, choices=range(1, 11), help='The amount of generated color shade or tint. Default: 5. Maximum: 10')
 
     arg = parser.parse_args()
@@ -59,8 +70,19 @@ def run():
 
         # Tint mode
         if mode == 'tint':
-            tint_mode(in_color, step, amount)
+            result_hex = tint_mode(in_color, step, amount)
 
         # Shade mode
         else:
-            shade_mode(in_color, step, amount)
+            result_hex = shade_mode(in_color, step, amount)
+
+        # Writing file
+        print('Writing file...')
+        with open('generated_colors', 'w') as file:
+            for i in range(amount):
+                if i == (amount-1):
+                    file.write("generated_color{0}='{1}'".format(i+1, result_hex[i]))
+                else:
+                    file.write("generated_color{0}='{1}'\n".format(i+1, result_hex[i]))
+
+        print('Wrote file successfully')
